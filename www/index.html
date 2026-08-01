@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakso Locer POS</title>
+    <meta name="description" content="Point of Sale untuk Bakso Locer">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a4022">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="brand">
+                <div class="logo-circle">BL</div>
+                <h2>Bakso Locer</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="pos-view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>
+                    Kasir
+                </li>
+                <li data-target="history-view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                    Riwayat
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- POS View -->
+            <div id="pos-view" class="view active-view">
+                <header class="top-header">
+                    <h1>Menu Utama</h1>
+                    <div class="header-actions">
+                        <span id="current-date" class="date-display"></span>
+                    </div>
+                </header>
+
+                <div class="menu-categories" id="category-filters">
+                    <button class="category-btn active" data-category="all">Semua</button>
+                    <button class="category-btn" data-category="makanan">Makanan</button>
+                    <button class="category-btn" data-category="minuman">Minuman</button>
+                </div>
+
+                <div class="menu-grid" id="menu-grid">
+                    <!-- Menu items will be injected here by JS -->
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history-view" class="view">
+                <header class="top-header">
+                    <h1>Riwayat Transaksi</h1>
+                    <button id="clear-history-btn" class="btn btn-outline-danger">Hapus Riwayat</button>
+                </header>
+                <div class="history-list" id="history-list">
+                    <!-- History items will be injected here by JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Cart Panel -->
+        <aside class="cart-panel">
+            <div class="cart-header">
+                <h2>Pesanan Saat Ini</h2>
+                <span id="cart-count" class="badge">0</span>
+            </div>
+            
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will be injected here -->
+                <div class="empty-cart-state" id="empty-cart-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    <p>Belum ada pesanan</p>
+                </div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">Rp 0</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>Total</span>
+                    <span id="cart-total">Rp 0</span>
+                </div>
+                <button id="checkout-btn" class="btn btn-primary btn-block" disabled>Proses Pembayaran</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pembayaran</h2>
+                <button class="close-modal" id="close-checkout-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-total-display">
+                    <span>Total Tagihan</span>
+                    <h3 id="modal-total">Rp 0</h3>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount-paid">Uang Diterima (Rp)</label>
+                    <input type="number" id="amount-paid" class="form-control" placeholder="Masukkan jumlah uang" min="0">
+                </div>
+
+                <div class="quick-amounts" id="quick-amounts">
+                    <!-- Quick amount buttons will be injected here -->
+                </div>
+
+                <div class="change-display" id="change-display" style="display: none;">
+                    <span>Kembalian</span>
+                    <h3 id="modal-change" class="text-green">Rp 0</h3>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-payment-btn" class="btn btn-primary btn-block" disabled>Konfirmasi Pesanan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal-overlay">
+        <div class="modal-content receipt-modal-content">
+            <div class="modal-header">
+                <h2>Struk Pesanan</h2>
+                <button class="close-modal" id="close-receipt-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="receipt-content">
+                <!-- Receipt content will go here -->
+            </div>
+            <div class="modal-footer" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button id="print-bluetooth-btn" class="btn btn-primary btn-block" style="background-color: #2563eb;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+                    Cetak ke Printer Bluetooth
+                </button>
+                <button id="print-receipt-btn" class="btn btn-primary btn-block" style="background-color: #10b981;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Kirim via WhatsApp
+                </button>
+                <button id="finish-transaction-btn" class="btn btn-block" style="background: transparent; color: var(--brand-green); border: 2px solid var(--brand-green);">
+                    Selesaikan Transaksi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully');
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
